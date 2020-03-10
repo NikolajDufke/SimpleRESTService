@@ -36,35 +36,38 @@ namespace SimpleRESTService.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Bog value)
         {
-            Library.Add(JsonConvert.DeserializeObject<Bog>(value));
+            if(!Library.Exists(x => x.ISBN13 == value.ISBN13))
+                Library.Add(value);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{ISBN13}")]
-        public void Put(string ISBN13, [FromBody]string value)
+        public void Put(string ISBN13, [FromBody]Bog value)
         {
+            Bog b = Get(ISBN13);
 
-            List<Bog> bookExist = Library.FindAll(x => x.ISBN13 == ISBN13);
-
-            if (bookExist.Count > 0)
+            if (b.ISBN13 == value.ISBN13)
             {
-                Bog bookToAdd = JsonConvert.DeserializeObject<Bog>(value);
-                Library.Add(bookToAdd);
+                b.ISBN13 = value.ISBN13;
+                b.Forfatter = value.Forfatter;
+                b.SideTal = value.SideTal;
+                b.Title = value.Title;
             }
-
         }
 
         // DELETE api/<controller>/5
         [HttpDelete("{ISBN13}")]
         public void Delete(string ISBN13)
         {
-            List<Bog> bookExist = Library.FindAll(x => x.ISBN13 == ISBN13);
+            Predicate<Bog> condition = x => x.ISBN13 == ISBN13;
+
+            List<Bog> bookExist = Library.FindAll(condition);
 
             if (bookExist.Count > 0)
             {
-                Library.RemoveAll(x => x.ISBN13 == ISBN13);
+                Library.RemoveAll(condition);
             }
         }
     }
