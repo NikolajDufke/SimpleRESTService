@@ -48,7 +48,7 @@ namespace SimpleRESTService.Controllers
         {
             Bog b = Get(ISBN13);
 
-            if (b.ISBN13 == value.ISBN13)
+            if (b != null)
             {
                 b.ISBN13 = value.ISBN13;
                 b.Forfatter = value.Forfatter;
